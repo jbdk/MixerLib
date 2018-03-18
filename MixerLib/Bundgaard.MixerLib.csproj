@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Bundgaard.MixerLib</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>John Bundgaard</Authors>
+    <Company>ohn Bundgaard</Company>
+    <Product>Bundgaard.MixerLib</Product>
+    <Description>Client for mixer.com streaming service</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="System.Net.WebSockets.Client" Version="4.3.2" />
+  </ItemGroup>
+
+</Project>
