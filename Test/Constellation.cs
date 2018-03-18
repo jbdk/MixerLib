@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace Test.Services.Mixer
+namespace Test
 {
    public class Constellation : Base
    {

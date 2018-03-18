@@ -3,7 +3,7 @@ using FluentAssertions;
 using MixerLib.Helpers;
 using Xunit;
 
-namespace Test.Services.Mixer
+namespace Test
 {
    public class General : Base
    {

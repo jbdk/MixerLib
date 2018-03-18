@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MixerLib;
 
-namespace Test.Services.Mixer
+namespace Test
 {
    public abstract class Base
    {

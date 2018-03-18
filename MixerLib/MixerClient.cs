@@ -10,9 +10,9 @@ namespace MixerLib
 {
    public static class MixerClient
    {
-      public static async Task<IMixerClient> StartAsync(string channelName, ILoggerFactory loggerFactory = null)
+      public static async Task<IMixerClient> StartAsync(string channelName, string token = null, ILoggerFactory loggerFactory = null)
       {
-         var client = new MixerClientInternal(channelName, loggerFactory);
+         var client = new MixerClientInternal(channelName, loggerFactory) { Token = token };
          await client.StartAsync();
          return client;
       }

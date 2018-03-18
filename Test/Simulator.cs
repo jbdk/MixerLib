@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using MixerLib;
 using Moq;
 
-namespace Test.Services.Mixer
+namespace Test
 {
    public class Simulator : IMixerFactory
    {
