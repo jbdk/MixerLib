@@ -9,6 +9,7 @@
     <Company>John Bundgaard</Company>
     <Product>Bundgaard.MixerLib</Product>
     <Description>Client for mixer.com chat/live events</Description>
+    <PackageProjectUrl>https://github.com/jbdk/MixerLib</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
