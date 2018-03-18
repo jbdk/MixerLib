@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace MixerLib
 {
-   public interface IMixerChat : IDisposable
-   {
-      bool IsAuthenticated { get; }
-      string[] Roles { get; }
-      Task ConnectAndJoinAsync(uint userId, uint channelId);
-      Task<bool> SendWhisperAsync(string userName, string message);
-      Task<bool> SendMessageAsync(string message);
-      Task<bool> TimeoutUserAsync(string userName, TimeSpan time);
-   }
+	public interface IMixerChat : IDisposable
+	{
+		bool IsAuthenticated { get; }
+		string[] Roles { get; }
+		Task ConnectAndJoinAsync(uint userId, uint channelId);
+		Task<bool> SendWhisperAsync(string userName, string message);
+		Task<bool> SendMessageAsync(string message);
+		Task<bool> TimeoutUserAsync(string userName, TimeSpan time);
+	}
 }

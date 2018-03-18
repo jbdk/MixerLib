@@ -1,7 +1,7 @@
 namespace MixerLib
 {
-   public interface IAuthorization
-   {
+	public interface IAuthorization
+	{
 
-   }
+	}
 }

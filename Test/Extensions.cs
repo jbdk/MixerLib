@@ -5,18 +5,18 @@ using System.Linq;
 
 namespace Test
 {
-   public static class Extensions
-   {
-      public static string RemoveWhitespace(this string input)
-      {
-         return new string(input.ToCharArray()
-             .Where(c => !Char.IsWhiteSpace(c))
-             .ToArray());
-      }
+	public static class Extensions
+	{
+		public static string RemoveWhitespace(this string input)
+		{
+			return new string(input.ToCharArray()
+					.Where(c => !Char.IsWhiteSpace(c))
+					.ToArray());
+		}
 
-      public static IDictionary<string, string> ToDictionary(this NameValueCollection source)
-      {
-         return source.Cast<string>().Select(s => new { Key = s, Value = source[s] }).ToDictionary(p => p.Key, p => p.Value);
-      }
-   }
+		public static IDictionary<string, string> ToDictionary(this NameValueCollection source)
+		{
+			return source.Cast<string>().Select(s => new { Key = s, Value = source[s] }).ToDictionary(p => p.Key, p => p.Value);
+		}
+	}
 }

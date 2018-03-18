@@ -1,7 +1,26 @@
-# MixerLib
+## MixerLib
 Chat/event client for mixer.com
 
-## Sample
+## Authorization
+This can run anonymously (no token) but to be able to do anything useful, it requires OAuth implicit grant authorization.
+Go to http://www.mixerdevtools.com/gettoken, set the scopes needed: 
+````
+channel:update:self
+chat:bypass_links
+chat:bypass_slowchat
+chat:change_ban
+chat:chat
+chat:connect
+chat:timeout
+chat:whisper
+````
+
+Click 'Get OAuth Token' and save the token in secrets (or where you need it).
+
+You can use your own mixer account or create a dedicated user account.
+The token can always be revoked under Account -> OAUTH-APPS, remove 'Mixer Dev Tools'
+
+## Code sample
 ````csharp
 namespace ChatMonitor
 {

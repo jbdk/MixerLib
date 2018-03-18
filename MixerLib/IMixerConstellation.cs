@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace MixerLib
 {
-   internal interface IMixerConstellation : IDisposable
-   {
-      Task ConnectAndJoinAsync(uint channelId);
-   }
+	internal interface IMixerConstellation : IDisposable
+	{
+		Task ConnectAndJoinAsync(uint channelId);
+	}
 }

@@ -5,27 +5,27 @@ using Xunit;
 
 namespace Test
 {
-   public class General : Base
-   {
-      public class EventTest
-      {
-         public event EventHandler Test;
-      }
+	public class General : Base
+	{
+		public class EventTest
+		{
+			public event EventHandler Test;
+		}
 
-      [Fact]
-      public void CanRaiseEventsUsingReflection()
-      {
-         int calls = 0;
-         var sut = new EventTest();
+		[Fact]
+		public void CanRaiseEventsUsingReflection()
+		{
+			int calls = 0;
+			var sut = new EventTest();
 
-         sut.Test += (e, s) => calls++;
-         sut.Test += (e, s) => calls++;
-         sut.Test += (e, s) => calls++;
-         sut.Test += (e, s) => calls++;
+			sut.Test += (e, s) => calls++;
+			sut.Test += (e, s) => calls++;
+			sut.Test += (e, s) => calls++;
+			sut.Test += (e, s) => calls++;
 
-         ReflectionHelper.RaiseEvent(sut, nameof(EventTest.Test), EventArgs.Empty);
+			ReflectionHelper.RaiseEvent(sut, nameof(EventTest.Test), EventArgs.Empty);
 
-         calls.Should().Be(4);
-      }
-   }
+			calls.Should().Be(4);
+		}
+	}
 }
