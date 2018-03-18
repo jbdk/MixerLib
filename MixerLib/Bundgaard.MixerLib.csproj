@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Bundgaard.MixerLib</PackageId>
-    <Version>0.1.0-alpha2</Version>
+    <Version>0.1.0-alpha3</Version>
     <Authors>John Bundgaard</Authors>
     <Company>John Bundgaard</Company>
     <Product>Bundgaard.MixerLib</Product>
