@@ -4,11 +4,11 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Bundgaard.MixerLib</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.0-alpha1</Version>
     <Authors>John Bundgaard</Authors>
-    <Company>ohn Bundgaard</Company>
+    <Company>John Bundgaard</Company>
     <Product>Bundgaard.MixerLib</Product>
-    <Description>Client for mixer.com streaming service</Description>
+    <Description>Client for mixer.com chat/live events</Description>
   </PropertyGroup>
 
   <ItemGroup>
