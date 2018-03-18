@@ -1,5 +1,13 @@
-## MixerLib
+# MixerLib
 Chat/event client for mixer.com
+
+## Status
+This is under heavy development right now, and may have limited functionality!
+
+## NuGet package
+````nuget
+Install-Package Bundgaard.MixerLib -pre
+````
 
 ## Authorization
 This can run anonymously (no token) but to be able to do anything useful, it requires OAuth implicit grant authorization.
