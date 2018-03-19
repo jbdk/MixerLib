@@ -4,13 +4,13 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Bundgaard.MixerLib</PackageId>
-    <Version>0.1.0-alpha3</Version>
+    <Version>0.1.0-alpha4</Version>
     <Authors>John Bundgaard</Authors>
     <Company>John Bundgaard</Company>
     <Product>Bundgaard.MixerLib</Product>
     <Description>Client for mixer.com chat/live events</Description>
     <PackageProjectUrl>https://github.com/jbdk/MixerLib</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/mixer/branding-kit/master/svg/MixerMerge_Light.svg</PackageIconUrl>
+    <PackageIconUrl>https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaAmetoahYfhGFJlkDPDJoGLeAVkZtpgOPteYKQtBAxIs9INS</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
