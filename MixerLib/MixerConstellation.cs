@@ -11,8 +11,6 @@ namespace MixerLib
 	{
 		const string WS_URL = "wss://constellation.mixer.com";
 
-		public string Token { get; set; }
-
 		readonly ILoggerFactory _loggerFactory;
 		readonly IMixerFactory _factory;
 		readonly CancellationToken _shutdown;
@@ -34,13 +32,13 @@ namespace MixerLib
 		/// </summary>
 		/// <param name="channelId">Our channelId</param>
 		/// <returns></returns>
-		public async Task ConnectAndJoinAsync(uint channelId)
+		public async Task ConnectAndJoinAsync(uint channelId, string token)
 		{
 			_channel = _factory.CreateJsonRpcWebSocket(_logger, _parser);
 
 			// Connect to the chat endpoint
 			var continueTrying = true;
-			while (continueTrying && !await _channel.TryConnectAsync(() => WS_URL, Token, async () => {
+			while (continueTrying && !await _channel.TryConnectAsync(() => WS_URL, token, async () => {
 				// Join the channel and subscribe to events
 				continueTrying = await _channel.SendAsync("livesubscribe",
 						$"channel:{channelId}:update",

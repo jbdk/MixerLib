@@ -9,43 +9,47 @@ namespace ChatMonitor
 {
 	internal static class Program
 	{
-		const string CHANNEL_NAME = "eurogamerspain";
-		const string TOKEN = "";
+		const string CHANNEL_NAME = "xbox";
+		const string TOKEN = null;
 
 		private static void Main(string[] args)
 		{
 			PrintLine(Cyan, "MixerLib ChatMonitor example\n");
 
+			IAuthorization auth = ( TOKEN != null ) ? new Auth.ImplicitGrant(TOKEN) : null;
+
 			try
 			{
 				Print(Gray, $"Connecting to mixer.com/{CHANNEL_NAME}...");
-				using (var mixer = MixerClient.StartAsync(CHANNEL_NAME, TOKEN).Result)
+				using (var mixer = MixerClient.StartAsync(CHANNEL_NAME, auth).Result)
 				{
 					Print(Green, "OK\n");
-					Print(Gray, $"You are connected as ");
 
+					Print(Gray, $"You are connected as ");
 					if (mixer.IsAuthenticated)
 						PrintLine(Green, mixer.UserName + "\n");
 					else
 						PrintLine(Red, "anonymous\n");
 
 					var (title, gameTypeId) = mixer.RestClient.GetChannelInfoAsync().Result;
-					var game = mixer.RestClient.LookupGameTypeByIdAsync(gameTypeId.GetValueOrDefault()).Result;
 					PrintLine(DarkGray, $"Title: '{title}'");
+					var game = mixer.RestClient.LookupGameTypeByIdAsync(gameTypeId.GetValueOrDefault()).Result;
 					PrintLine(DarkGray, $"Game:  '{game?.Name}'");
 
 					var uptime = mixer.GetUptime();
 					if (uptime.HasValue)
 						PrintLine(DarkGray, $"Channel has been live for {uptime} with {mixer.CurrentViewers} viewers currently.");
 					else
-						PrintLine(DarkGray, "Channel is offline.");
+						PrintLine(DarkGray, "Channel is OFFLINE.");
 
 					mixer.ChatMessage += Mixer_ChatMessage;
+					mixer.StatusUpdate += Mixer_StatusUpdate;
 
 					PrintLine(Gray, "\nPress ENTER to exit\n\n");
 					Console.ReadLine();
 
 					mixer.ChatMessage -= Mixer_ChatMessage;
+					mixer.StatusUpdate -= Mixer_StatusUpdate;
 				}
 			}
 			catch (Exception ex)
@@ -54,8 +58,23 @@ namespace ChatMonitor
 			}
 		}
 
+		private static void Mixer_StatusUpdate(object sender, StatusUpdateEventArgs e)
+		{
+			if (e.IsOnline == null)
+				return;
+			Print(DarkGray, $"{DateTime.Now.ToLongTimeString()} ");
+			Print(Gray, "Channel is now ");
+			if (e.IsOnline == true)
+				Print(Green, "ONLINE\n");
+			else
+				Print(Red, "OFFLINE\n");
+		}
+
 		private static void Mixer_ChatMessage(object sender, ChatMessageEventArgs e)
 		{
+			if (e.UserName.EndsWith("Bot") && e.IsModerator)
+				return;
+
 			Print(DarkGray, $"{DateTime.Now.ToLongTimeString()} ");
 			var c = Gray;
 			if (e.IsOwner)

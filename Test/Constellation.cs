@@ -46,8 +46,8 @@ namespace Test
 				using (var monitor = sut.Monitor())
 				{
 					ws.InjectPacket(packet);
-					monitor.Should().Raise(nameof(sut.Updated))
-						.WithArgs<ServiceUpdatedEventArgs>(a => a.NewFollowers == 66 && a.NewViewers == null && a.IsOnline == null && a.ChannelId == sim.ChannelInfo.Id)
+					monitor.Should().Raise(nameof(sut.StatusUpdate))
+						.WithArgs<StatusUpdateEventArgs>(a => a.NewFollowers == 66 && a.NewViewers == null && a.IsOnline == null && a.ChannelId == sim.ChannelInfo.Id)
 						.WithSender(sut);
 				}
 			}
@@ -66,8 +66,8 @@ namespace Test
 				using (var monitor = sut.Monitor())
 				{
 					ws.InjectPacket(packet);
-					monitor.Should().Raise(nameof(sut.Updated))
-						.WithArgs<ServiceUpdatedEventArgs>(a => a.NewFollowers == null && a.NewViewers == 735 && a.IsOnline == null && a.ChannelId == sim.ChannelInfo.Id)
+					monitor.Should().Raise(nameof(sut.StatusUpdate))
+						.WithArgs<StatusUpdateEventArgs>(a => a.NewFollowers == null && a.NewViewers == 735 && a.IsOnline == null && a.ChannelId == sim.ChannelInfo.Id)
 						.WithSender(sut);
 				}
 			}
@@ -87,7 +87,7 @@ namespace Test
 				using (var monitor = sut.Monitor())
 				{
 					ws.InjectPacket(packet);  // 2nd
-					monitor.Should().NotRaise(nameof(sut.Updated));
+					monitor.Should().NotRaise(nameof(sut.StatusUpdate));
 				}
 			}
 		}
@@ -105,8 +105,8 @@ namespace Test
 				using (var monitor = sut.Monitor())
 				{
 					ws.InjectPacket(packet);
-					monitor.Should().Raise(nameof(sut.Updated))
-						.WithArgs<ServiceUpdatedEventArgs>(a => a.NewFollowers == 22 && a.NewViewers == 43 && a.IsOnline == true && a.ChannelId == sim.ChannelInfo.Id)
+					monitor.Should().Raise(nameof(sut.StatusUpdate))
+						.WithArgs<StatusUpdateEventArgs>(a => a.NewFollowers == 22 && a.NewViewers == 43 && a.IsOnline == true && a.ChannelId == sim.ChannelInfo.Id)
 						.WithSender(sut);
 				}
 			}
@@ -125,7 +125,7 @@ namespace Test
 				sim.ConstellationWebSocket = new SimulatedClientWebSocket(false, false, Simulator.CONSTALLATION_WELCOME);
 				ws.Dispose();
 				ws = sim.ConstellationWebSocket;
-				var connectedAndJoined = ws.JoinedConstallation.Wait(Simulator.TIMEOUT);
+				var connectedAndJoined = ws.JoinedConstallation.Wait(Simulator.TIMEOUT * 5);
 
 				connectedAndJoined.Should().BeTrue();
 			}
@@ -138,6 +138,7 @@ namespace Test
 			var ws = sim.ConstellationWebSocket;
 			using (var sut = new MixerClientInternal(ChannelName, LoggerFactory, sim))
 			{
+				sut.Token = Token;
 				sut.StartAsync().Wait(Simulator.TIMEOUT);
 
 				ws.Headers.Should().Contain("Authorization", $"Bearer {Token}");
@@ -154,7 +155,7 @@ namespace Test
 			{
 				sut.StartAsync().Wait(Simulator.TIMEOUT);
 
-				foreach (var line in File.ReadAllLines("Services/Mixer/Data/ConstellationDump.json"))
+				foreach (var line in File.ReadAllLines("Data/ConstellationDump.json"))
 				{
 					if (string.IsNullOrWhiteSpace(line))
 						continue;

@@ -10,9 +10,11 @@ namespace MixerLib
 {
 	public static class MixerClient
 	{
-		public static async Task<IMixerClient> StartAsync(string channelName, string token = null, ILoggerFactory loggerFactory = null)
+		public static async Task<IMixerClient> StartAsync(string channelName, IAuthorization auth, ILoggerFactory loggerFactory = null)
 		{
-			var client = new MixerClientInternal(channelName, loggerFactory) { Token = token };
+			var client = new MixerClientInternal(channelName, loggerFactory);
+			if (auth != null)
+				client.Token = ( auth as IAuthInternal )?.GetToken();
 			await client.StartAsync();
 			return client;
 		}
@@ -20,7 +22,7 @@ namespace MixerLib
 
 	internal class MixerClientInternal : IMixerClient, IMixerClientInternal
 	{
-		public event EventHandler<ServiceUpdatedEventArgs> Updated;
+		public event EventHandler<StatusUpdateEventArgs> StatusUpdate;
 		public event EventHandler<ChatMessageEventArgs> ChatMessage;
 		public event EventHandler<ChatUserInfoEventArgs> UserJoined;
 		public event EventHandler<ChatUserInfoEventArgs> UserLeft;
@@ -102,7 +104,7 @@ namespace MixerLib
 				_liveParser.Viewers);
 
 			// Connect to live events (viewer/follower count etc)
-			await _live.ConnectAndJoinAsync(_restClient.ChannelId.Value);
+			await _live.ConnectAndJoinAsync(_restClient.ChannelId.Value, Token);
 
 			// Connect to chat server
 			await _chat.ConnectAndJoinAsync(_restClient.UserId.GetValueOrDefault(), _restClient.ChannelId.Value);

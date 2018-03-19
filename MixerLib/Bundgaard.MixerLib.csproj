@@ -10,6 +10,7 @@
     <Product>Bundgaard.MixerLib</Product>
     <Description>Client for mixer.com chat/live events</Description>
     <PackageProjectUrl>https://github.com/jbdk/MixerLib</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/mixer/branding-kit/master/svg/MixerMerge_Light.svg</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>

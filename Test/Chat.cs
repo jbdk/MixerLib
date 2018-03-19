@@ -336,7 +336,7 @@ namespace Test
 			{
 				sut.StartAsync().Wait(Simulator.TIMEOUT);
 
-				foreach (var line in File.ReadAllLines("Services/Mixer/Data/ChatDump.json"))
+				foreach (var line in File.ReadAllLines("Data/ChatDump.json"))
 				{
 					if (string.IsNullOrWhiteSpace(line))
 						continue;

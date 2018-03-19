@@ -2,7 +2,7 @@ using System;
 
 namespace MixerLib.Events
 {
-	public class ServiceUpdatedEventArgs : EventArgs
+	public class StatusUpdateEventArgs : EventArgs
 	{
 		public uint ChannelId { get; set; }
 		public int? NewFollowers { get; set; }

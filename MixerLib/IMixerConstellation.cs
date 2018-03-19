@@ -7,6 +7,6 @@ namespace MixerLib
 {
 	internal interface IMixerConstellation : IDisposable
 	{
-		Task ConnectAndJoinAsync(uint channelId);
+		Task ConnectAndJoinAsync(uint channelId, string token);
 	}
 }

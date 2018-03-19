@@ -71,12 +71,12 @@ namespace MixerLib
 
 		private void HandleUpdate(uint channelId, WS.LivePayload data)
 		{
-			ServiceUpdatedEventArgs update = null;
+			StatusUpdateEventArgs update = null;
 
 			if (data.NumFollowers.HasValue && data.NumFollowers != Followers)
 			{
 				Followers = (int)data.NumFollowers.Value;
-				update = update ?? new ServiceUpdatedEventArgs();
+				update = update ?? new StatusUpdateEventArgs();
 				update.NewFollowers = Followers;
 				_logger.LogTrace($"New followers count: {Followers}");
 			}
@@ -87,7 +87,7 @@ namespace MixerLib
 				if (count != Viewers)
 				{
 					Viewers = count;
-					update = update ?? new ServiceUpdatedEventArgs();
+					update = update ?? new StatusUpdateEventArgs();
 					update.NewViewers = count;
 					_logger.LogTrace($"New viewers count: {count}");
 				}
@@ -95,7 +95,7 @@ namespace MixerLib
 
 			if (data.Online.HasValue)
 			{
-				update = update ?? new ServiceUpdatedEventArgs();
+				update = update ?? new StatusUpdateEventArgs();
 				update.IsOnline = IsOnline = data.Online.Value;
 				StreamStartedAt = null;  // Clear cached stream start time
 				_logger.LogTrace($"Online status changed to: {update.IsOnline}");
@@ -104,7 +104,7 @@ namespace MixerLib
 			if (update != null)
 			{
 				update.ChannelId = channelId;
-				_fireEvent(nameof(MixerClientInternal.Updated), update);
+				_fireEvent(nameof(MixerClientInternal.StatusUpdate), update);
 			}
 		}
 

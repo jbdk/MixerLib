@@ -78,7 +78,6 @@ namespace MixerLib
 			public bool Following { get; set; }
 		}
 
-
 		public class HostedPayload
 		{
 			public uint HosterId { get; set; }
