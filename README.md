@@ -3,6 +3,7 @@ Chat/event client for mixer.com
 
 ## Status
 [![Build Status](https://travis-ci.org/jbdk/MixerLib.svg?branch=master)](https://travis-ci.org/jbdk/MixerLib)
+[![Build status](https://ci.appveyor.com/api/projects/status/evlyc4y2pmai2afa?svg=true)](https://ci.appveyor.com/project/jbdk/mixerlib)
 
 This is under heavy development right now, and may have limited functionality!
 
