@@ -2,6 +2,8 @@
 Chat/event client for mixer.com
 
 ## Status
+[![Build Status](https://travis-ci.org/jbdk/MixerLib.svg?branch=master)](https://travis-ci.org/jbdk/MixerLib)
+
 This is under heavy development right now, and may have limited functionality!
 
 ## NuGet package
