@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO.Pipes;
+using System.Net;
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -28,10 +29,12 @@ namespace Test
 		readonly ManualResetEventSlim _clientDoneProcessing = new ManualResetEventSlim();
 		readonly string _welcomeMessage;
 		bool _isFirstSend = true;
-		private readonly bool _isAuthenticated;
-		readonly NamedPipeServerStream _serverPipe;
-		readonly NamedPipeClientStream _injectPipe;
+		readonly bool _isAuthenticated;
 		readonly int _myId;
+		readonly TcpClient _injectSocket;
+		TcpClient _serverSocket;
+		Random _random = new Random();
+
 
 		public SimulatedClientWebSocket(bool isChat, bool isAuthenticated, string welcomeMessage = null)
 		{
@@ -41,12 +44,20 @@ namespace Test
 
 			_myId = Interlocked.Increment(ref _connectionId);
 
-			string pipeName = "FritzTestPipe_" + GetHashCode().ToString();
-			_serverPipe = new NamedPipeServerStream(pipeName, PipeDirection.In, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message, PipeOptions.Asynchronous);
-			var t = _serverPipe.WaitForConnectionAsync();
-			_injectPipe = new NamedPipeClientStream(".", pipeName, PipeDirection.Out, PipeOptions.Asynchronous);
-			_injectPipe.Connect();
-			t.Wait();
+			// Setup internal loopback socket connection
+			int port = 10000 + _random.Next(25000);
+			var server = new TcpListener(IPAddress.Loopback, port);
+			server.Start();
+			var t = server.AcceptTcpClientAsync();
+			_injectSocket = new TcpClient();
+			_injectSocket.NoDelay = true;
+			_injectSocket.Connect(IPAddress.Loopback, port);
+			if (t.Wait(Simulator.TIMEOUT))
+			{
+				_serverSocket = t.Result;
+				_serverSocket.NoDelay = true;
+			}
+			server.Stop();
 		}
 
 		virtual public Task ConnectAsync(Uri uri, CancellationToken cancellationToken)
@@ -58,7 +69,7 @@ namespace Test
 			if (!string.IsNullOrEmpty(_welcomeMessage))
 			{
 				var bytes = Encoding.UTF8.GetBytes(_welcomeMessage);
-				_injectPipe.WriteAsync(bytes, 0, bytes.Length);
+				_injectSocket.Client.SendAsync(bytes, SocketFlags.None);
 			}
 
 			Log($"SimWebSocket CONNECTED {uri}");
@@ -70,7 +81,8 @@ namespace Test
 			if (CloseStatus.HasValue)
 				throw new WebSocketException("WebSocket is closed");
 
-			int n = await _serverPipe.ReadAsync(buffer.Array, buffer.Offset, buffer.Count, cancellationToken);
+			int n = await _serverSocket.Client.ReceiveAsync(buffer, SocketFlags.None);
+			_serverSocket.Client.Send(new byte[] { 1 });
 			if (cancellationToken.IsCancellationRequested)
 				return null;
 			if (n == 0)
@@ -125,9 +137,9 @@ namespace Test
 			Headers.Add(name, value);
 		}
 
-		public void InjectPacket(string json)
+		public void InjectPacket(string json, bool waitForReply = false)
 		{
-			if (!_injectPipe.IsConnected)
+			if (!_injectSocket.Connected)
 			{
 				Log("Cant inject packet, not connected!");
 				return;
@@ -136,8 +148,9 @@ namespace Test
 			_clientDoneProcessing.Reset();
 
 			var bytes = Encoding.UTF8.GetBytes(json);
-			_injectPipe.Write(bytes, 0, bytes.Length);
-			_injectPipe.WaitForPipeDrain();
+			_injectSocket.Client.Send(bytes);
+			if (waitForReply)
+				_injectSocket.Client.ReceiveAsync(new ArraySegment<byte>(new byte[10]), SocketFlags.None).Wait(Simulator.TIMEOUT);
 
 			// Wait until client code has processed the message (its back waiting for more)
 			var timeout = Debugger.IsAttached ? Timeout.Infinite : Simulator.TIMEOUT;
@@ -155,8 +168,8 @@ namespace Test
 		{
 			Log("SimWebSocket Disposing!");
 			CloseStatus = WebSocketCloseStatus.NormalClosure;
-			_injectPipe.Dispose();
-			_serverPipe.Dispose();
+			_injectSocket.Dispose();
+			_serverSocket.Dispose();
 		}
 	}
 }
