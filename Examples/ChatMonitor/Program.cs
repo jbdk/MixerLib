@@ -9,7 +9,7 @@ namespace ChatMonitor
 {
 	internal static class Program
 	{
-		const string CHANNEL_NAME = "xbox";
+		const string CHANNEL_NAME = "jobun44";
 		const string TOKEN = null;
 
 		private static void Main(string[] args)

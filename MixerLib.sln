@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatMonitor", "Examples\Cha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{E8CD3ACE-030A-467D-8F42-3A9DC8E92EC2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PacketLogger", "Examples\PacketLogger\PacketLogger.csproj", "{899E2C81-0749-48F4-A1AC-ED6CF3A53927}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,12 +40,17 @@ Global
 		{E8CD3ACE-030A-467D-8F42-3A9DC8E92EC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8CD3ACE-030A-467D-8F42-3A9DC8E92EC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8CD3ACE-030A-467D-8F42-3A9DC8E92EC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{899E2C81-0749-48F4-A1AC-ED6CF3A53927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{899E2C81-0749-48F4-A1AC-ED6CF3A53927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{899E2C81-0749-48F4-A1AC-ED6CF3A53927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{899E2C81-0749-48F4-A1AC-ED6CF3A53927}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CE152219-3E4B-4E27-9193-A3EED0EB7BB0} = {7B2B2F94-21C6-4807-B546-5D61206258D1}
+		{899E2C81-0749-48F4-A1AC-ED6CF3A53927} = {7B2B2F94-21C6-4807-B546-5D61206258D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {325C4C59-A409-4BAB-ACFA-E4830FD33CB3}

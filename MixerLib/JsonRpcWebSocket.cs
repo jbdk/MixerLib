@@ -182,10 +182,10 @@ namespace MixerLib
 				}
 				catch (Exception e) // Maybe filter the exception on HResult == 0x80072eff (WININET_E_CONNECTION_RESET) ?
 				{
-					_logger.LogWarning("Error in ReceiverTask() {0}. Will reconnect", e.Message);
 					if (_cancellationToken.IsCancellationRequested)
 						return;
 
+					_logger.LogWarning("Error in ReceiverTask() {0}. Will reconnect", e.Message);
 					reconnect().Forget();  // Will spawn a new receiver task
 					break;
 				}

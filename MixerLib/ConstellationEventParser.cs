@@ -78,7 +78,6 @@ namespace MixerLib
 				Followers = (int)data.NumFollowers.Value;
 				update = update ?? new StatusUpdateEventArgs();
 				update.NewFollowers = Followers;
-				_logger.LogTrace($"New followers count: {Followers}");
 			}
 
 			if (data.ViewersCurrent.HasValue)
@@ -98,7 +97,6 @@ namespace MixerLib
 				update = update ?? new StatusUpdateEventArgs();
 				update.IsOnline = IsOnline = data.Online.Value;
 				StreamStartedAt = null;  // Clear cached stream start time
-				_logger.LogTrace($"Online status changed to: {update.IsOnline}");
 			}
 
 			if (update != null)
