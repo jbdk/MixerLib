@@ -72,7 +72,7 @@ namespace ChatMonitor
 
 		private static void Mixer_ChatMessage(object sender, ChatMessageEventArgs e)
 		{
-			if (e.UserName.EndsWith("Bot") && e.IsModerator)
+			if (e.UserName.EndsWith("Bot", StringComparison.InvariantCultureIgnoreCase) && e.IsModerator)
 				return;
 
 			Print(DarkGray, $"{DateTime.Now.ToLongTimeString()} ");
