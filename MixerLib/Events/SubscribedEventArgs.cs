@@ -4,7 +4,7 @@ namespace MixerLib.Events
 {
 	public class SubscribedEventArgs : EventArgs
 	{
-		public string UserName { get; set; }
-		public uint ChannelId { get; set; }
+		public string UserName { get; internal set; }
+		public uint ChannelId { get; internal set; }
 	}
 }

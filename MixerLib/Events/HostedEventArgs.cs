@@ -4,9 +4,9 @@ namespace MixerLib.Events
 {
 	public class HostedEventArgs : EventArgs
 	{
-		public bool IsHosting { get; set; }
-		public string HosterName { get; set; }
-		public uint CurrentViewers { get; set; }
-		public uint ChannelId { get; set; }
+		public bool IsHosting { get; internal set; }
+		public string HosterName { get; internal set; }
+		public uint CurrentViewers { get; internal set; }
+		public uint ChannelId { get; internal set; }
 	}
 }
