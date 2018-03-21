@@ -22,7 +22,7 @@ namespace MixerLib
 
 	internal class MixerClientInternal : IMixerClient, IMixerClientInternal
 	{
-		public event EventHandler<StatusUpdateEventArgs> StatusUpdate;
+		public event EventHandler<ChannelUpdateEventArgs> ChannelUpdate;
 		public event EventHandler<ChatMessageEventArgs> ChatMessage;
 		public event EventHandler<ChatUserInfoEventArgs> UserJoined;
 		public event EventHandler<ChatUserInfoEventArgs> UserLeft;

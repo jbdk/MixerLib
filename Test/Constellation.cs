@@ -46,8 +46,8 @@ namespace Test
 				using (var monitor = sut.Monitor())
 				{
 					ws.InjectPacket(packet);
-					monitor.Should().Raise(nameof(sut.StatusUpdate))
-						.WithArgs<StatusUpdateEventArgs>(a => a.NewFollowers == 66 && a.NewViewers == null && a.IsOnline == null && a.ChannelId == sim.ChannelInfo.Id)
+					monitor.Should().Raise(nameof(sut.ChannelUpdate))
+						.WithArgs<ChannelUpdateEventArgs>(a => a.Channel.NumFollowers == 66 && a.Channel.ViewersCurrent == null && a.Channel.Online == null && a.ChannelId == sim.ChannelInfo.Id)
 						.WithSender(sut);
 				}
 			}
@@ -66,28 +66,9 @@ namespace Test
 				using (var monitor = sut.Monitor())
 				{
 					ws.InjectPacket(packet);
-					monitor.Should().Raise(nameof(sut.StatusUpdate))
-						.WithArgs<StatusUpdateEventArgs>(a => a.NewFollowers == null && a.NewViewers == 735 && a.IsOnline == null && a.ChannelId == sim.ChannelInfo.Id)
+					monitor.Should().Raise(nameof(sut.ChannelUpdate))
+						.WithArgs<ChannelUpdateEventArgs>(a => a.Channel.NumFollowers == null && a.Channel.ViewersCurrent == 735 && a.Channel.Online == null && a.ChannelId == sim.ChannelInfo.Id)
 						.WithSender(sut);
-				}
-			}
-		}
-
-		[Fact]
-		public void DontRaiseEventWhenViewersIsSameAsBefore()
-		{
-			var packet = BuildLiveEvent("channel:1234:update", viewers: 35);
-
-			var sim = SimAnon.Value;
-			var ws = sim.ConstellationWebSocket;
-			using (var sut = new MixerClientInternal(ChannelName, LoggerFactory, sim))
-			{
-				sut.StartAsync().Wait(Simulator.TIMEOUT);
-				ws.InjectPacket(packet);    // 1st
-				using (var monitor = sut.Monitor())
-				{
-					ws.InjectPacket(packet);  // 2nd
-					monitor.Should().NotRaise(nameof(sut.StatusUpdate));
 				}
 			}
 		}
@@ -105,8 +86,8 @@ namespace Test
 				using (var monitor = sut.Monitor())
 				{
 					ws.InjectPacket(packet);
-					monitor.Should().Raise(nameof(sut.StatusUpdate))
-						.WithArgs<StatusUpdateEventArgs>(a => a.NewFollowers == 22 && a.NewViewers == 43 && a.IsOnline == true && a.ChannelId == sim.ChannelInfo.Id)
+					monitor.Should().Raise(nameof(sut.ChannelUpdate))
+						.WithArgs<ChannelUpdateEventArgs>(a => a.Channel.NumFollowers == 22 && a.Channel.ViewersCurrent == 43 && a.Channel.Online == true && a.ChannelId == sim.ChannelInfo.Id)
 						.WithSender(sut);
 				}
 			}

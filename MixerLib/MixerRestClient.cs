@@ -72,7 +72,7 @@ namespace MixerLib
 						UserName = me.Username;
 					}
 					_initDone = true;
-					return (channelInfo.Online, (int)channelInfo.ViewersCurrent, (int)channelInfo.NumFollowers);
+					return (channelInfo.Online.GetValueOrDefault(), (int)channelInfo.ViewersCurrent.GetValueOrDefault(), (int)channelInfo.NumFollowers.GetValueOrDefault());
 				}
 				catch (HttpRequestException ex)
 				{

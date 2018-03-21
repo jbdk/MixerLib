@@ -48,7 +48,7 @@ namespace MixerLib
 			switch (eventName)
 			{
 				case "update":
-					HandleUpdate(channelId, data.GetObject<WS.LivePayload>());
+					HandleUpdate(channelId, data.GetObject<API.Channel>());
 					break;
 				case "followed":
 					HandleFollowed(channelId, data.GetObject<WS.FollowedPayload>());
@@ -69,41 +69,9 @@ namespace MixerLib
 			}
 		}
 
-		private void HandleUpdate(uint channelId, WS.LivePayload data)
+		private void HandleUpdate(uint channelId, API.Channel data)
 		{
-			StatusUpdateEventArgs update = null;
-
-			if (data.NumFollowers.HasValue && data.NumFollowers != Followers)
-			{
-				Followers = (int)data.NumFollowers.Value;
-				update = update ?? new StatusUpdateEventArgs();
-				update.NewFollowers = Followers;
-			}
-
-			if (data.ViewersCurrent.HasValue)
-			{
-				var count = (int)data.ViewersCurrent.Value;
-				if (count != Viewers)
-				{
-					Viewers = count;
-					update = update ?? new StatusUpdateEventArgs();
-					update.NewViewers = count;
-					_logger.LogTrace($"New viewers count: {count}");
-				}
-			}
-
-			if (data.Online.HasValue)
-			{
-				update = update ?? new StatusUpdateEventArgs();
-				update.IsOnline = IsOnline = data.Online.Value;
-				StreamStartedAt = null;  // Clear cached stream start time
-			}
-
-			if (update != null)
-			{
-				update.ChannelId = channelId;
-				_fireEvent(nameof(MixerClientInternal.StatusUpdate), update);
-			}
+			_fireEvent(nameof(MixerClientInternal.ChannelUpdate), new ChannelUpdateEventArgs { ChannelId = channelId, Channel = data });
 		}
 
 		void HandleFollowed(uint channelId, WS.FollowedPayload payload)
@@ -115,13 +83,13 @@ namespace MixerLib
 		void HandleHosted(uint channelId, WS.HostedPayload payload)
 		{
 			_fireEvent(nameof(MixerClientInternal.Hosted),
-				new HostedEventArgs { ChannelId = channelId, IsHosting = true, HosterName = payload.Hoster.Name, CurrentViewers = payload.Hoster.ViewersCurrent });
+				new HostedEventArgs { ChannelId = channelId, IsHosting = true, HosterName = payload.Hoster.Name, CurrentViewers = payload.Hoster.ViewersCurrent.GetValueOrDefault() });
 		}
 
 		void HandleUnhosted(uint channelId, WS.HostedPayload payload)
 		{
 			_fireEvent(nameof(MixerClientInternal.Hosted),
-				new HostedEventArgs { ChannelId = channelId, IsHosting = false, HosterName = payload.Hoster.Name, CurrentViewers = payload.Hoster.ViewersCurrent });
+				new HostedEventArgs { ChannelId = channelId, IsHosting = false, HosterName = payload.Hoster.Name, CurrentViewers = payload.Hoster.ViewersCurrent.GetValueOrDefault() });
 		}
 
 		void HandleSubscribed(uint channelId, WS.SubscribedPayload payload)

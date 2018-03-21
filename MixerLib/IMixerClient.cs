@@ -14,7 +14,7 @@ namespace MixerLib
 
 		IMixerRestClient RestClient { get; }
 
-		event EventHandler<StatusUpdateEventArgs> StatusUpdate;
+		event EventHandler<ChannelUpdateEventArgs> ChannelUpdate;
 		event EventHandler<FollowedEventArgs> Followed;
 		event EventHandler<HostedEventArgs> Hosted;
 		event EventHandler<SubscribedEventArgs> Subscribed;

@@ -43,13 +43,13 @@ namespace ChatMonitor
 						PrintLine(DarkGray, "Channel is OFFLINE.");
 
 					mixer.ChatMessage += Mixer_ChatMessage;
-					mixer.StatusUpdate += Mixer_StatusUpdate;
+					mixer.ChannelUpdate += Mixer_StatusUpdate;
 
 					PrintLine(Gray, "\nPress ENTER to exit\n\n");
 					Console.ReadLine();
 
 					mixer.ChatMessage -= Mixer_ChatMessage;
-					mixer.StatusUpdate -= Mixer_StatusUpdate;
+					mixer.ChannelUpdate -= Mixer_StatusUpdate;
 				}
 			}
 			catch (Exception ex)
@@ -58,13 +58,13 @@ namespace ChatMonitor
 			}
 		}
 
-		private static void Mixer_StatusUpdate(object sender, StatusUpdateEventArgs e)
+		private static void Mixer_StatusUpdate(object sender, ChannelUpdateEventArgs e)
 		{
-			if (e.IsOnline == null)
+			if (e.Channel.Online == null)
 				return;
 			Print(DarkGray, $"{DateTime.Now.ToLongTimeString()} ");
 			Print(Gray, "Channel is now ");
-			if (e.IsOnline == true)
+			if (e.Channel.Online == true)
 				Print(Green, "ONLINE\n");
 			else
 				Print(Red, "OFFLINE\n");

@@ -57,16 +57,16 @@ namespace MixerLib
 			public uint Id { get; set; }
 			public uint UserId { get; set; }
 			public string Token { get; set; }
-			public bool Online { get; set; }
+			public bool? Online { get; set; }
 			public uint FeatureLevel { get; set; }
 			public bool Partnered { get; set; }
 			public uint? TranscodingProfileId { get; set; }
 			public bool Suspended { get; set; }
 			public string Name { get; set; }
 			public string Audience { get; set; }
-			public uint ViewersTotal { get; set; }
-			public uint ViewersCurrent { get; set; }
-			public uint NumFollowers { get; set; }
+			public uint? ViewersTotal { get; set; }
+			public uint? ViewersCurrent { get; set; }
+			public uint? NumFollowers { get; set; }
 			public string Description { get; set; }
 			[J(DefaultValueHandling = DefaultValueHandling.Ignore)]
 			public uint? TypeId { get; set; }
