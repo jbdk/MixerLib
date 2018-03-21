@@ -55,7 +55,7 @@ namespace Test
 				Type = "event",
 				Event = "ChatMessage",
 				Data = new WS.ChatData {
-					Channel = sim.ChannelInfo.Id,
+					Channel = sim.ChannelInfo.Id.GetValueOrDefault(),
 					Id = Guid.NewGuid(),
 					UserName = userName,
 					UserId = userId,
@@ -84,10 +84,10 @@ namespace Test
 				Type = "reply",
 				Id = id,
 				Data = new WS.ChatData {
-					Channel = sim.ChannelInfo.Id,
+					Channel = sim.ChannelInfo.Id.GetValueOrDefault(),
 					Id = Guid.NewGuid(),
 					UserName = sim.UserName,
-					UserId = sim.ChannelInfo.UserId,
+					UserId = sim.ChannelInfo.UserId.GetValueOrDefault(),
 					UserRoles = new string[] { "User" },
 					UserLevel = 22,
 					UserAvatar = "https://uploads.mixer.com/avatar/ed47s4h5-696.jpg",
@@ -104,7 +104,7 @@ namespace Test
 				Type = "event",
 				Event = isJoin ? "UserJoin" : "UserLeave",
 				Data = new WS.User {
-					OriginatingChannel = sim.ChannelInfo.Id,
+					OriginatingChannel = sim.ChannelInfo.Id.GetValueOrDefault(),
 					Id = userId,
 					Username = userName,
 					Roles = new string[] { "User" }
@@ -113,14 +113,14 @@ namespace Test
 			return MixerSerializer.Serialize(root);
 		}
 
-		protected static string BuildLiveEvent(string channel, uint? followers = null, uint? viewers = null, bool? online = null)
+		protected static string BuildChannelStatusEvent(string channel, uint? followers = null, uint? viewers = null, bool? online = null)
 		{
-			var root = new WS.LiveEvent<WS.LivePayload> {
+			var root = new WS.ChannelStatusEvent<API.Channel> {
 				Type = "event",
 				Event = "live",
-				Data = new WS.LiveData<WS.LivePayload> {
+				Data = new WS.ChannelStatusData<API.Channel> {
 					Channel = channel,
-					Payload = new WS.LivePayload {
+					Payload = new API.Channel {
 						NumFollowers = followers,
 						ViewersCurrent = viewers,
 						Online = online

@@ -55,21 +55,10 @@ namespace MixerLib
 			public string Target { get; set; }
 		}
 
-		public class LiveData<TPayload>
+		public class ChannelStatusData<TPayload>
 		{
 			[J("channel")] public string Channel { get; set; }
 			public TPayload Payload { get; set; }
-		}
-
-		public class LivePayload
-		{
-			[J(DefaultValueHandling = DefaultValueHandling.Ignore)]
-			public uint? NumFollowers { get; set; }
-			[J(DefaultValueHandling = DefaultValueHandling.Ignore)]
-			public uint? ViewersCurrent { get; set; }
-			[J(DefaultValueHandling = DefaultValueHandling.Ignore)]
-			public bool? Online { get; set; }
-			// ... ?
 		}
 
 		public class FollowedPayload
@@ -97,15 +86,15 @@ namespace MixerLib
 			public uint TotalMonths { get; set; }
 		}
 
-		public class LiveEvent
+		public class ChannelStatusEvent
 		{
 			public string Type { get; set; }
 			public string Event { get; set; }
 		}
 
-		public class LiveEvent<TPayload> : LiveEvent
+		public class ChannelStatusEvent<TPayload> : ChannelStatusEvent
 		{
-			public LiveData<TPayload> Data { get; set; }
+			public ChannelStatusData<TPayload> Data { get; set; }
 		}
 
 		public class HelloData

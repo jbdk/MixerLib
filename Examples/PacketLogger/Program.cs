@@ -11,7 +11,7 @@ namespace PacketLogger
 		//
 		static void Main(string[] args)
 		{
-			const string CHANNEL_NAME = "jobun44";
+			const string CHANNEL_NAME = "Phixate";
 			const string TOKEN = null;
 
 			ILoggerFactory loggerFactory = new LoggerFactory();

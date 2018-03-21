@@ -36,7 +36,7 @@ namespace Test
 		[Fact]
 		public void RaisesFollowerEvent()
 		{
-			var packet = BuildLiveEvent("channel:1234:update", followers: 66);
+			var packet = BuildChannelStatusEvent("channel:1234:update", followers: 66);
 
 			var sim = SimAnon.Value;
 			var ws = sim.ConstellationWebSocket;
@@ -56,7 +56,7 @@ namespace Test
 		[Fact]
 		public void RaiseViewersEvent()
 		{
-			var packet = BuildLiveEvent("channel:1234:update", viewers: 735);
+			var packet = BuildChannelStatusEvent("channel:1234:update", viewers: 735);
 
 			var sim = SimAnon.Value;
 			var ws = sim.ConstellationWebSocket;
@@ -76,7 +76,7 @@ namespace Test
 		[Fact]
 		public void CanCombineEvent()
 		{
-			var packet = BuildLiveEvent("channel:1234:update", followers: 22, viewers: 43, online: true);
+			var packet = BuildChannelStatusEvent("channel:1234:update", followers: 22, viewers: 43, online: true);
 
 			var sim = SimAnon.Value;
 			var ws = sim.ConstellationWebSocket;
