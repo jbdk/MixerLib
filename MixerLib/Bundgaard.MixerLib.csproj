@@ -11,6 +11,7 @@
     <Description>Client for mixer.com chat/live events</Description>
     <PackageProjectUrl>https://github.com/jbdk/MixerLib</PackageProjectUrl>
     <PackageIconUrl>https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaAmetoahYfhGFJlkDPDJoGLeAVkZtpgOPteYKQtBAxIs9INS</PackageIconUrl>
+    <RootNamespace>MixerLib</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
