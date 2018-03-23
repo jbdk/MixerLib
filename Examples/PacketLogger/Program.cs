@@ -1,6 +1,7 @@
 using System;
-using Microsoft.Extensions.Logging;
 using MixerLib;
+using Serilog;
+using Serilog.AspNetCore;
 
 namespace PacketLogger
 {
@@ -11,17 +12,20 @@ namespace PacketLogger
 		//
 		static void Main(string[] args)
 		{
-			const string CHANNEL_NAME = "Phixate";
+			const string CHANNEL_NAME = "xbox";
 			const string TOKEN = null;
 
-			ILoggerFactory loggerFactory = new LoggerFactory();
-			loggerFactory.AddConsole(LogLevel.Trace);
+			var lc = new LoggerConfiguration()
+				.MinimumLevel.Verbose()
+				.WriteTo.ColoredConsole()
+				.CreateLogger();
+			var loggerFactory = new SerilogLoggerFactory(lc);
 
 			IAuthorization auth = ( TOKEN != null ) ? new Auth.ImplicitGrant(TOKEN) : null;
 
 			try
 			{
-				Console.Write($"Connecting to mixer.com/{CHANNEL_NAME}...");
+				Console.WriteLine($"Connecting to mixer.com/{CHANNEL_NAME}...");
 				using (var mixer = MixerClient.StartAsync(CHANNEL_NAME, auth, loggerFactory).Result)
 				{
 					Console.WriteLine("OK\n");
