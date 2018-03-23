@@ -5,21 +5,21 @@ using Serilog.AspNetCore;
 
 namespace PacketLogger
 {
-	class Program
+	internal static class Program
 	{
 		//
 		// This will show all the packets coming in on the web-socket's on the console, by installing a ConsoleLogger
 		//
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			const string CHANNEL_NAME = "xbox";
 			const string TOKEN = null;
 
-			var lc = new LoggerConfiguration()
+			var logger = new LoggerConfiguration()
 				.MinimumLevel.Verbose()
 				.WriteTo.ColoredConsole()
 				.CreateLogger();
-			var loggerFactory = new SerilogLoggerFactory(lc);
+			var loggerFactory = new SerilogLoggerFactory(logger);
 
 			IAuthorization auth = ( TOKEN != null ) ? new Auth.ImplicitGrant(TOKEN) : null;
 
