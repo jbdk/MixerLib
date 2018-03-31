@@ -6,7 +6,7 @@ namespace MixerLib
 	public interface IMixerClient : IChatClient, IDisposable
 	{
 		uint? ChannelID { get; }
-		string ChannnelName { get; }
+		string ChannelName { get; }
 		uint? UserId { get; }
 		string UserName { get; }
 		int CurrentFollowers { get; }

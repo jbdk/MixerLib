@@ -31,7 +31,7 @@ namespace MixerLib
 		public event EventHandler<SubscribedEventArgs> Subscribed;
 		public event EventHandler<ResubscribedEventArgs> Resubscribed;
 
-		public string ChannnelName { get; }
+		public string ChannelName { get; }
 		public string Token { get; set; }
 
 		public int CurrentFollowers { get => _liveParser.Followers; }
@@ -64,7 +64,7 @@ namespace MixerLib
 			if (loggerFactory == null)
 				loggerFactory = new NullLoggerFactory();
 
-			ChannnelName = channelName;
+			ChannelName = channelName;
 
 			_shutdownRequested = new CancellationTokenSource();
 			_loggerFactory = loggerFactory;
@@ -93,7 +93,7 @@ namespace MixerLib
 			_chat = _factory.CreateChat(_restClient, _chatParser, _shutdownRequested.Token);
 
 			// Get our current channel information
-			var (online, viewers, followers) = await _restClient.InitAsync(ChannnelName, Token);
+			var (online, viewers, followers) = await _restClient.InitAsync(ChannelName, Token);
 			_liveParser.IsOnline = online;
 			_liveParser.Followers = followers;
 			_liveParser.Viewers = viewers;
