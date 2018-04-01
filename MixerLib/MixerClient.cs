@@ -10,6 +10,14 @@ namespace MixerLib
 {
 	public static class MixerClient
 	{
+		/// <summary>
+		/// Start the mixer client, which will connect to all the needed endpoints.
+		/// It will automatically maintain the connections when StartAsync completes. 
+		/// </summary>
+		/// <param name="channelName">Name of the channel to join</param>
+		/// <param name="auth">Authorization info or null if to connect anonymously. Pass a instance of Auth.ImplicitGrant here for simple token auth</param>
+		/// <param name="loggerFactory">The logger factory to use or null</param>
+		/// <returns>IMixerClient</returns>
 		public static async Task<IMixerClient> StartAsync(string channelName, IAuthorization auth, ILoggerFactory loggerFactory = null)
 		{
 			var client = new MixerClientInternal(channelName, loggerFactory);
@@ -76,8 +84,8 @@ namespace MixerLib
 
 		// Used during testing
 		internal MixerClientInternal(string channelName, ILoggerFactory loggerFactory, IMixerFactory factory,
-												 ConstellationEventParser liveParser = null, ChatEventParser chatParser = null)
-			: this(channelName, loggerFactory)
+																										ConstellationEventParser liveParser = null, ChatEventParser chatParser = null)
+				: this(channelName, loggerFactory)
 		{
 			_factory = factory ?? new MixerFactory(loggerFactory);
 			_liveParser = liveParser ?? _liveParser;
@@ -99,9 +107,9 @@ namespace MixerLib
 			_liveParser.Viewers = viewers;
 
 			_logger.LogInformation("JOINING CHANNEL '{0}' as {1}. {2} with {3} viewers", _restClient.ChannelName,
-				_restClient.HasToken ? _restClient.UserName : "anonymous (monitor only)",
-				_liveParser.IsOnline == true ? "ONLINE" : "OFFLINE",
-				_liveParser.Viewers);
+					_restClient.HasToken ? _restClient.UserName : "anonymous (monitor only)",
+					_liveParser.IsOnline == true ? "ONLINE" : "OFFLINE",
+					_liveParser.Viewers);
 
 			// Connect to live events (viewer/follower count etc)
 			await _live.ConnectAndJoinAsync(_restClient.ChannelId.Value, Token);
