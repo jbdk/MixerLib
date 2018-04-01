@@ -41,10 +41,14 @@ namespace ChatMonitor
       {
          Console.WriteLine("MixerLib ChatMonitor example\n");
 
+         const string CHANNEL_NAME = "xbox";
+         const string TOKEN = null;
+
          try
          {
             Console.Write("Connecting...");
-            using (var mixer = MixerClient.StartAsync("xbox").Result)
+            IAuthorization auth = ( TOKEN != null ) ? new Auth.ImplicitGrant(TOKEN) : null;
+            using (IMixerClient mixer = MixerClient.StartAsync(CHANNEL_NAME, auth).Result)
             {
                Console.WriteLine("OK");
 
