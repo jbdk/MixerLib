@@ -1,7 +1,7 @@
 # MixerLib
 Chat/event client for mixer.com
 
-[![NuGet version (Bundgaard.MixerLib)](https://img.shields.io/nuget/v/Bundgaard.MixerLib?style=flat-square)](https://www.nuget.org/packages/Bundgaard.MixerLib/)
+[![NuGet version (Bundgaard.MixerLib)](https://img.shields.io/nuget/v/Bundgaard.MixerLib.svg?style=flat-square)](https://www.nuget.org/packages/Bundgaard.MixerLib/)
 [![Build Status](https://travis-ci.org/jbdk/MixerLib.svg?branch=dev)](https://travis-ci.org/jbdk/MixerLib)
 [![Build status](https://ci.appveyor.com/api/projects/status/evlyc4y2pmai2afa?svg=true)](https://ci.appveyor.com/project/jbdk/mixerlib)
 
