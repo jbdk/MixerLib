@@ -5,13 +5,6 @@ Chat/event client for mixer.com
 [![Build Status](https://travis-ci.org/jbdk/MixerLib.svg?branch=dev)](https://travis-ci.org/jbdk/MixerLib)
 [![Build status](https://ci.appveyor.com/api/projects/status/evlyc4y2pmai2afa?svg=true)](https://ci.appveyor.com/project/jbdk/mixerlib)
 
-This is under heavy development right now, and may have limited functionality!
-
-## NuGet package
-````nuget
-Install-Package Bundgaard.MixerLib -pre
-````
-
 ## Authorization
 This can run anonymously (no token) but to be able to do anything useful, it requires OAuth implicit grant authorization.
 Go to http://www.mixerdevtools.com/gettoken, set the scopes needed: 
