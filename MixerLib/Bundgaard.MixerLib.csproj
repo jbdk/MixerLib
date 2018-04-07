@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Bundgaard.MixerLib</PackageId>
-    <Version>0.1.0-alpha4</Version>
+    <Version>0.1.0</Version>
     <Authors>John Bundgaard</Authors>
     <Company>John Bundgaard</Company>
     <Product>Bundgaard.MixerLib</Product>
@@ -12,6 +12,7 @@
     <PackageProjectUrl>https://github.com/jbdk/MixerLib</PackageProjectUrl>
     <PackageIconUrl>https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaAmetoahYfhGFJlkDPDJoGLeAVkZtpgOPteYKQtBAxIs9INS</PackageIconUrl>
     <RootNamespace>MixerLib</RootNamespace>
+    <PackageReleaseNotes>1.1.x Added Polly for auto-retry API request</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
