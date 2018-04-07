@@ -287,8 +287,6 @@ namespace MixerLib
 					.OrResult<HttpResponseMessage>(r => s_httpStatusCodesWorthRetrying.Contains(r.StatusCode))
 					.WaitAndRetryAsync(RETRY_COUNT, (_) => TimeSpan.FromMilliseconds(RetryDelay))
 					.ExecuteAsync(() => _client.GetAsync(requestUri));
-
-				response.EnsureSuccessStatusCode();
 				return response;
 			}
 			catch (Exception e)
@@ -301,6 +299,7 @@ namespace MixerLib
 		async Task<T> GetObjectAsync<T>(string requestUri)
 		{
 			var response = await GetAsync(requestUri);
+			response.EnsureSuccessStatusCode();
 			var json = await response.Content.ReadAsStringAsync();
 			return MixerSerializer.Deserialize<T>(json);
 		}
