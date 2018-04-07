@@ -34,15 +34,16 @@ namespace Test
 		readonly TcpClient _injectSocket;
 		TcpClient _serverSocket;
 		Random _random = new Random();
-		private readonly bool _failConnect;
+		private readonly int _failConnectCount;
 		public int ConnectionAttempts { get; internal set; }
+		public ManualResetEventSlim FailedConnectAttemptsReached { get; } = new ManualResetEventSlim();
 
-		public SimulatedClientWebSocket(bool isChat, bool isAuthenticated, string welcomeMessage = null, bool failConnect = false)
+		public SimulatedClientWebSocket(bool isChat, bool isAuthenticated, string welcomeMessage = null, int failConnectCount = 0)
 		{
 			IsChat = isChat;
 			_welcomeMessage = welcomeMessage;
 			_isAuthenticated = isAuthenticated;
-			_failConnect = failConnect;
+			_failConnectCount = failConnectCount;
 
 			_myId = Interlocked.Increment(ref _connectionId);
 
@@ -69,9 +70,11 @@ namespace Test
 			CloseStatus = null;
 			ConnectUrl = uri.ToString();
 
-			if (_failConnect)
+			if (_failConnectCount != 0)
 			{
 				await Task.Yield();
+				if (ConnectionAttempts >= _failConnectCount)
+					FailedConnectAttemptsReached.Set();
 				throw new Exception("TEST TEST TEST");
 			}
 

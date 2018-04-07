@@ -37,11 +37,13 @@ namespace Test
 		public void WIllRetryFailedInitialConstellationConnection()
 		{
 			var sim = SimAuth.Value;
-			var ws = sim.ConstellationWebSocket = new SimulatedClientWebSocket(false, true, failConnect: true);
+			var ws = sim.ConstellationWebSocket = new SimulatedClientWebSocket(false, true, failConnectCount: 4);
 			using (var sut = new MixerClientInternal(ChannelName, LoggerFactory, sim))
 			{
-				sut.StartAsync().Wait(50);
-				ws.ConnectionAttempts.Should().BeGreaterThan(1);
+				var task = sut.StartAsync();
+				var didRetry = ws.FailedConnectAttemptsReached.Wait(Simulator.TIMEOUT);
+				didRetry.Should().BeTrue();
+				ws.ConnectionAttempts.Should().BeGreaterOrEqualTo(4);
 			}
 		}
 
