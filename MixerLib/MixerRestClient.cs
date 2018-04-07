@@ -1,17 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MixerLib.Helpers;
+using Polly;
 
 namespace MixerLib
 {
 	internal class MixerRestClient : IMixerRestClient
 	{
 		const string API_URL = "https://mixer.com/api/v1/";
+		const int RETRY_COUNT = 4;
+		public const int TIMEOUT_IN_SECONDS = 5;
 
 		public int RetryDelay { get; set; } = 2000;
 		public int MaxTries { get; set; } = 3;
@@ -24,6 +28,14 @@ namespace MixerLib
 		readonly ILogger _logger;
 		readonly HttpClient _client;
 		private bool _initDone;
+
+		static readonly HttpStatusCode[] s_httpStatusCodesWorthRetrying = {
+			HttpStatusCode.RequestTimeout, // 408
+			HttpStatusCode.InternalServerError, // 500
+			HttpStatusCode.BadGateway, // 502
+			HttpStatusCode.ServiceUnavailable, // 503
+			HttpStatusCode.GatewayTimeout // 504
+		};
 
 		/// <summary>
 		/// Construct new MixerRestClient
@@ -61,13 +73,13 @@ namespace MixerLib
 				try
 				{
 					var req = $"channels/{WebUtility.UrlEncode(ChannelName)}?fields=id,numFollowers,viewersCurrent,online";
-					var channelInfo = await GetAsync<API.Channel>(req);
+					var channelInfo = await GetObjectAsync<API.Channel>(req);
 					ChannelId = channelInfo.Id;
 
 					if (HasToken)
 					{
 						// User might not be joining own channel
-						var me = await GetAsync<API.User>("users/current");
+						var me = await GetObjectAsync<API.User>("users/current");
 						UserId = me.Id;
 						UserName = me.Username;
 					}
@@ -96,7 +108,7 @@ namespace MixerLib
 			try
 			{
 				var req = $"channels/{WebUtility.UrlEncode(userName)}?noCount=1";
-				var channel = await GetAsync<API.Channel>(req);
+				var channel = await GetObjectAsync<API.Channel>(req);
 				return channel.UserId;
 			}
 			catch (HttpRequestException)
@@ -178,7 +190,7 @@ namespace MixerLib
 
 			var req = $"channels/{ChannelId}/manifest.light2";
 			_logger.LogTrace("GET {0}{1}", API_URL, req);
-			var response = await _client.GetAsync(req);
+			var response = await GetAsync(req);
 			if (response.StatusCode != HttpStatusCode.OK)
 				return null;
 			var json = await response.Content.ReadAsStringAsync();
@@ -196,7 +208,7 @@ namespace MixerLib
 
 			// Get chat authkey and chat endpoints
 			var req = $"chats/{ChannelId}";
-			return GetAsync<API.Chats>(req);
+			return GetObjectAsync<API.Chats>(req);
 		}
 
 		/// <summary>
@@ -207,7 +219,7 @@ namespace MixerLib
 			if (!_initDone)
 				throw new Exception("Call InitAsync() first!");
 
-			var result = await GetAsync<API.Channel>($"channels/{ChannelId}?fields=name,typeId");
+			var result = await GetObjectAsync<API.Channel>($"channels/{ChannelId}?fields=name,typeId");
 			return (result.Name, result.TypeId);
 		}
 
@@ -241,7 +253,7 @@ namespace MixerLib
 			if (!_initDone)
 				throw new Exception("Call InitAsync() first!");
 
-			var result = await _client.GetAsync($"types/{gameTypeId}");
+			var result = await GetAsync($"types/{gameTypeId}");
 			if (result.StatusCode != HttpStatusCode.OK)
 				return null;
 			var json = await result.Content.ReadAsStringAsync();
@@ -258,16 +270,38 @@ namespace MixerLib
 			if (!_initDone)
 				throw new Exception("Call InitAsync() first!");
 
-			return await GetAsync<API.GameTypeSimple[]>($"types?limit=10&noCount=1&scope=all&query={WebUtility.UrlEncode(query)}");
+			return await GetObjectAsync<API.GameTypeSimple[]>($"types?limit=10&noCount=1&scope=all&query={WebUtility.UrlEncode(query)}");
 		}
 
 		#region HttpClient helpers
 
-		async Task<T> GetAsync<T>(string requestUri)
+		async Task<HttpResponseMessage> GetAsync(string requestUri)
 		{
 			_logger.LogTrace("GET {0}{1}", API_URL, requestUri);
 
-			var json = await _client.GetStringAsync(requestUri);
+			try
+			{
+				var response = await Policy
+					.HandleInner<HttpRequestException>()
+					.OrInner<TaskCanceledException>()
+					.OrResult<HttpResponseMessage>(r => s_httpStatusCodesWorthRetrying.Contains(r.StatusCode))
+					.WaitAndRetryAsync(RETRY_COUNT, (_) => TimeSpan.FromMilliseconds(RetryDelay))
+					.ExecuteAsync(() => _client.GetAsync(requestUri));
+
+				response.EnsureSuccessStatusCode();
+				return response;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError("GET request failed: {0}", e.Message);
+				throw;
+			}
+		}
+
+		async Task<T> GetObjectAsync<T>(string requestUri)
+		{
+			var response = await GetAsync(requestUri);
+			var json = await response.Content.ReadAsStringAsync();
 			return MixerSerializer.Deserialize<T>(json);
 		}
 
@@ -278,11 +312,26 @@ namespace MixerLib
 			var message = new HttpRequestMessage(new HttpMethod("PATCH"), requestUri) {
 				Content = new JsonContent(data)
 			};
-			var response = await _client.SendAsync(message);
-			response.EnsureSuccessStatusCode();
-			if (response.Content != null)
-				return await response.Content.ReadAsStringAsync();
-			return null;
+
+			try
+			{
+				var response = await Policy
+					.HandleInner<HttpRequestException>()
+					.OrInner<TaskCanceledException>()
+					.OrResult<HttpResponseMessage>(r => s_httpStatusCodesWorthRetrying.Contains(r.StatusCode))
+					.WaitAndRetryAsync(RETRY_COUNT, (_) => TimeSpan.FromMilliseconds(RetryDelay))
+					.ExecuteAsync(() => _client.SendAsync(message));
+
+				response.EnsureSuccessStatusCode();
+				if (response.Content != null)
+					return await response.Content.ReadAsStringAsync();
+				return null;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError("PATCH request failed: {0}", e.Message);
+				throw;
+			}
 		}
 
 		#endregion

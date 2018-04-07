@@ -18,6 +18,6 @@ namespace MixerLib
 		public IMixerConstellation CreateConstellation(IEventParser parser, CancellationToken shutdownRequest) => new MixerConstellation(_loggerFactory, this, parser, shutdownRequest);
 		public IMixerChat CreateChat(IMixerRestClient client, IEventParser parser, CancellationToken shutdownRequest) => new MixerChat(_loggerFactory, this, client, parser, shutdownRequest);
 		public IJsonRpcWebSocket CreateJsonRpcWebSocket(ILogger logger, IEventParser parser) => new JsonRpcWebSocket(logger, this, parser);
-		public IMixerRestClient CreateRestClient() => new MixerRestClient(_loggerFactory, new HttpClient());
+		public IMixerRestClient CreateRestClient() => new MixerRestClient(_loggerFactory, new HttpClient() { Timeout = TimeSpan.FromSeconds(MixerRestClient.TIMEOUT_IN_SECONDS) });
 	}
 }
