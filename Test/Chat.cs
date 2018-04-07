@@ -34,6 +34,18 @@ namespace Test
 		}
 
 		[Fact]
+		public void WIllRetryFailedInitialChatConnection()
+		{
+			var sim = SimAuth.Value;
+			var ws = sim.ChatWebSocket = new SimulatedClientWebSocket(true, true, failConnect: true);
+			using (var sut = new MixerClientInternal(ChannelName, LoggerFactory, sim))
+			{
+				sut.StartAsync().Wait(50);
+				ws.ConnectionAttempts.Should().BeGreaterThan(1);
+			}
+		}
+
+		[Fact]
 		public void WillConnectAndJoinAnonymously()
 		{
 			var sim = SimAnon.Value;
@@ -93,9 +105,9 @@ namespace Test
 				{
 					ws.InjectPacket(packet);
 					monitor.Should().Raise(nameof(sut.ChatMessage))
-						.WithArgs<ChatMessageEventArgs>(a => a.Message == "Hello world!" && a.UserName == "connor" && a.UserId == 56789
-																						&& !a.IsModerator && a.IsOwner && !a.IsWhisper && a.ChannelId == sim.ChannelInfo.Id)
-						.WithSender(sut);
+												 .WithArgs<ChatMessageEventArgs>(a => a.Message == "Hello world!" && a.UserName == "connor" && a.UserId == 56789
+																																																																																																																																																																													&& !a.IsModerator && a.IsOwner && !a.IsWhisper && a.ChannelId == sim.ChannelInfo.Id)
+												 .WithSender(sut);
 				}
 			}
 		}
@@ -113,9 +125,9 @@ namespace Test
 				{
 					ws.InjectPacket(packet);
 					monitor.Should().Raise(nameof(sut.ChatMessage))
-						.WithArgs<ChatMessageEventArgs>(a => a.Message == "Hello world!" && a.UserName == "connor" && a.UserId == 56789
-																						&& !a.IsModerator && a.IsOwner && a.IsWhisper && a.ChannelId == sim.ChannelInfo.Id)
-						.WithSender(sut);
+												 .WithArgs<ChatMessageEventArgs>(a => a.Message == "Hello world!" && a.UserName == "connor" && a.UserId == 56789
+																																																																																																																																																																													&& !a.IsModerator && a.IsOwner && a.IsWhisper && a.ChannelId == sim.ChannelInfo.Id)
+												 .WithSender(sut);
 				}
 			}
 		}
@@ -134,8 +146,8 @@ namespace Test
 				{
 					ws.InjectPacket(packet);
 					monitor.Should().Raise(nameof(sut.ChatMessage))
-						.WithArgs<ChatMessageEventArgs>(a => a.Message == "Hello world!" && a.UserName == "connor" && a.UserId == 56789 && a.IsModerator && a.IsOwner && !a.IsWhisper)
-						.WithSender(sut);
+												 .WithArgs<ChatMessageEventArgs>(a => a.Message == "Hello world!" && a.UserName == "connor" && a.UserId == 56789 && a.IsModerator && a.IsOwner && !a.IsWhisper)
+												 .WithSender(sut);
 				}
 			}
 		}
@@ -153,8 +165,8 @@ namespace Test
 				{
 					ws.InjectPacket(packet);
 					monitor.Should().Raise(nameof(sut.UserJoined))
-						.WithArgs<ChatUserInfoEventArgs>(a => a.UserId == 34103083 && a.UserName == "SomeNewUser" && a.ChannelId == sim.ChannelInfo.Id)
-						.WithSender(sut);
+												 .WithArgs<ChatUserInfoEventArgs>(a => a.UserId == 34103083 && a.UserName == "SomeNewUser" && a.ChannelId == sim.ChannelInfo.Id)
+												 .WithSender(sut);
 				}
 			}
 		}
@@ -172,8 +184,8 @@ namespace Test
 				{
 					ws.InjectPacket(packet);
 					monitor.Should().Raise(nameof(sut.UserLeft))
-						.WithArgs<ChatUserInfoEventArgs>(a => a.UserId == 34103083 && a.UserName == "SomeNewUser" && a.ChannelId == sim.ChannelInfo.Id)
-						.WithSender(sut);
+												 .WithArgs<ChatUserInfoEventArgs>(a => a.UserId == 34103083 && a.UserName == "SomeNewUser" && a.ChannelId == sim.ChannelInfo.Id)
+												 .WithSender(sut);
 				}
 			}
 		}
@@ -218,8 +230,8 @@ namespace Test
 				{
 					ws.InjectPacket(packet);
 					monitor.Should().Raise(nameof(sut.ChatMessage))
-						.WithArgs<ChatMessageEventArgs>(a => a.Avatar == "" && a.UserName == "connor")
-						.WithSender(sut);
+												 .WithArgs<ChatMessageEventArgs>(a => a.Avatar == "" && a.UserName == "connor")
+												 .WithSender(sut);
 				}
 			}
 		}

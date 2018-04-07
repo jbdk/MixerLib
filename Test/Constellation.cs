@@ -34,6 +34,18 @@ namespace Test
 		}
 
 		[Fact]
+		public void WIllRetryFailedInitialConstellationConnection()
+		{
+			var sim = SimAuth.Value;
+			var ws = sim.ConstellationWebSocket = new SimulatedClientWebSocket(false, true, failConnect: true);
+			using (var sut = new MixerClientInternal(ChannelName, LoggerFactory, sim))
+			{
+				sut.StartAsync().Wait(50);
+				ws.ConnectionAttempts.Should().BeGreaterThan(1);
+			}
+		}
+
+		[Fact]
 		public void RaisesFollowerEvent()
 		{
 			var packet = BuildChannelStatusEvent("channel:1234:update", followers: 66);
@@ -47,8 +59,8 @@ namespace Test
 				{
 					ws.InjectPacket(packet);
 					monitor.Should().Raise(nameof(sut.ChannelUpdate))
-						.WithArgs<ChannelUpdateEventArgs>(a => a.Channel.NumFollowers == 66 && a.Channel.ViewersCurrent == null && a.Channel.Online == null && a.ChannelId == sim.ChannelInfo.Id)
-						.WithSender(sut);
+						  .WithArgs<ChannelUpdateEventArgs>(a => a.Channel.NumFollowers == 66 && a.Channel.ViewersCurrent == null && a.Channel.Online == null && a.ChannelId == sim.ChannelInfo.Id)
+						  .WithSender(sut);
 				}
 			}
 		}
@@ -67,8 +79,8 @@ namespace Test
 				{
 					ws.InjectPacket(packet);
 					monitor.Should().Raise(nameof(sut.ChannelUpdate))
-						.WithArgs<ChannelUpdateEventArgs>(a => a.Channel.NumFollowers == null && a.Channel.ViewersCurrent == 735 && a.Channel.Online == null && a.ChannelId == sim.ChannelInfo.Id)
-						.WithSender(sut);
+						  .WithArgs<ChannelUpdateEventArgs>(a => a.Channel.NumFollowers == null && a.Channel.ViewersCurrent == 735 && a.Channel.Online == null && a.ChannelId == sim.ChannelInfo.Id)
+						  .WithSender(sut);
 				}
 			}
 		}
@@ -87,8 +99,8 @@ namespace Test
 				{
 					ws.InjectPacket(packet);
 					monitor.Should().Raise(nameof(sut.ChannelUpdate))
-						.WithArgs<ChannelUpdateEventArgs>(a => a.Channel.NumFollowers == 22 && a.Channel.ViewersCurrent == 43 && a.Channel.Online == true && a.ChannelId == sim.ChannelInfo.Id)
-						.WithSender(sut);
+						  .WithArgs<ChannelUpdateEventArgs>(a => a.Channel.NumFollowers == 22 && a.Channel.ViewersCurrent == 43 && a.Channel.Online == true && a.ChannelId == sim.ChannelInfo.Id)
+						  .WithSender(sut);
 				}
 			}
 		}

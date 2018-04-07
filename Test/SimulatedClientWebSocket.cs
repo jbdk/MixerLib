@@ -34,13 +34,15 @@ namespace Test
 		readonly TcpClient _injectSocket;
 		TcpClient _serverSocket;
 		Random _random = new Random();
+		private readonly bool _failConnect;
+		public int ConnectionAttempts { get; internal set; }
 
-
-		public SimulatedClientWebSocket(bool isChat, bool isAuthenticated, string welcomeMessage = null)
+		public SimulatedClientWebSocket(bool isChat, bool isAuthenticated, string welcomeMessage = null, bool failConnect = false)
 		{
 			IsChat = isChat;
 			_welcomeMessage = welcomeMessage;
 			_isAuthenticated = isAuthenticated;
+			_failConnect = failConnect;
 
 			_myId = Interlocked.Increment(ref _connectionId);
 
@@ -60,20 +62,27 @@ namespace Test
 			server.Stop();
 		}
 
-		virtual public Task ConnectAsync(Uri uri, CancellationToken cancellationToken)
+		virtual public async Task ConnectAsync(Uri uri, CancellationToken cancellationToken)
 		{
+			ConnectionAttempts++;
+
 			CloseStatus = null;
 			ConnectUrl = uri.ToString();
+
+			if (_failConnect)
+			{
+				await Task.Yield();
+				throw new Exception("TEST TEST TEST");
+			}
 
 			// Enqueue welcome messages
 			if (!string.IsNullOrEmpty(_welcomeMessage))
 			{
 				var bytes = Encoding.UTF8.GetBytes(_welcomeMessage);
-				_injectSocket.Client.SendAsync(bytes, SocketFlags.None);
+				_ = _injectSocket.Client.SendAsync(bytes, SocketFlags.None);
 			}
 
 			Log($"SimWebSocket CONNECTED {uri}");
-			return Task.CompletedTask;
 		}
 
 		virtual public async Task<WebSocketReceiveResult> ReceiveAsync(ArraySegment<byte> buffer, CancellationToken cancellationToken)
@@ -106,15 +115,15 @@ namespace Test
 					if (_isAuthenticated)
 					{
 						InjectPacket("{'type':'reply','error':null,'id':<MSGID>,'data':{'authenticated':true,'roles':[]}}"
-							.Replace("'", "\"")
-							.Replace("<MSGID>", LastId.ToString())
+								  .Replace("'", "\"")
+								  .Replace("<MSGID>", LastId.ToString())
 						);
 					}
 					else
 					{
 						InjectPacket("{'type':'reply','error':null,'id':<MSGID>,'data':null}"
-							.Replace("'", "\"")
-							.Replace("<MSGID>", LastId.ToString())
+								  .Replace("'", "\"")
+								  .Replace("<MSGID>", LastId.ToString())
 						);
 					}
 				}
