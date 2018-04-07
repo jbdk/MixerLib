@@ -75,7 +75,8 @@ namespace Test
 				await Task.Yield();
 				if (ConnectionAttempts >= _failConnectCount)
 					FailedConnectAttemptsReached.Set();
-				throw new Exception("TEST TEST TEST");
+				else
+					throw new Exception("TEST TEST TEST");
 			}
 
 			// Enqueue welcome messages

@@ -42,8 +42,8 @@ namespace Test
 			{
 				var task = sut.StartAsync();
 				var didRetry = ws.FailedConnectAttemptsReached.Wait(Simulator.TIMEOUT);
-				didRetry.Should().BeTrue();
 				ws.ConnectionAttempts.Should().BeGreaterOrEqualTo(4);
+				didRetry.Should().BeTrue();
 			}
 		}
 
