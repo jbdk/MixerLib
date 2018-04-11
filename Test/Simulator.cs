@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -54,6 +55,7 @@ namespace Test
 			_restClientMock.Setup(x => x.HasToken).Returns(HasToken);
 		}
 
+		public IWebProxy Proxy { get; set; }
 		IClientWebSocketProxy IMixerFactory.CreateClientWebSocket(bool isChat) => ( isChat ) ? ChatWebSocket : ConstellationWebSocket;
 		IJsonRpcWebSocket IMixerFactory.CreateJsonRpcWebSocket(ILogger logger, IEventParser parser) =>
 			new JsonRpcWebSocket(new Mock<ILogger>().Object, this, parser) { ReplyTimeout = TimeSpan.FromMilliseconds(500), ReconnectDelay = TimeSpan.Zero };

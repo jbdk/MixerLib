@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using MixerLib.Helpers;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using System.Net;
 
 namespace MixerLib
 {

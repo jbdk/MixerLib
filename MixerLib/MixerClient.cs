@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -18,9 +19,9 @@ namespace MixerLib
 		/// <param name="auth">Authorization info or null if to connect anonymously. Pass a instance of Auth.ImplicitGrant here for simple token auth</param>
 		/// <param name="loggerFactory">The logger factory to use or null</param>
 		/// <returns>IMixerClient</returns>
-		public static async Task<IMixerClient> StartAsync(string channelName, IAuthorization auth, ILoggerFactory loggerFactory = null)
+		public static async Task<IMixerClient> StartAsync(string channelName, IAuthorization auth, ILoggerFactory loggerFactory = null, IWebProxy proxy = null)
 		{
-			var client = new MixerClientInternal(channelName, loggerFactory);
+			var client = new MixerClientInternal(channelName, loggerFactory, proxy);
 			if (auth != null)
 				client.Token = ( auth as IAuthInternal )?.GetToken();
 			await client.StartAsync();
@@ -49,23 +50,25 @@ namespace MixerLib
 		public uint? UserId { get => _restClient.UserId; }
 		public string UserName { get => _restClient.UserName; }
 
+		public IMixerRestClient RestClient { get => _restClient; }
+
 		readonly ILogger _logger;
+		readonly CancellationTokenSource _shutdownRequested;
+		readonly ConstellationEventParser _liveParser;
+		readonly ChatEventParser _chatParser;
+		readonly ILoggerFactory _loggerFactory;
+		readonly IWebProxy _proxy;
+
 		IMixerChat _chat;
 		IMixerConstellation _live;
 		IMixerRestClient _restClient;
 		IMixerFactory _factory;
-		readonly CancellationTokenSource _shutdownRequested;
-		readonly ConstellationEventParser _liveParser;
-		readonly ChatEventParser _chatParser;
-		private readonly ILoggerFactory _loggerFactory;
-
-		public IMixerRestClient RestClient { get => _restClient; }
 
 		IMixerFactory IMixerClientInternal.Factory { get => _factory; }
 		IMixerConstellation IMixerClientInternal.Constellation { get => _live; }
 		IMixerChat IMixerClientInternal.Chat { get => _chat; }
 
-		public MixerClientInternal(string channelName, ILoggerFactory loggerFactory = null)
+		public MixerClientInternal(string channelName, ILoggerFactory loggerFactory = null, IWebProxy proxy = null)
 		{
 			if (string.IsNullOrEmpty(channelName))
 				throw new ArgumentException("Can't be null or empty", nameof(channelName));
@@ -80,21 +83,22 @@ namespace MixerLib
 
 			_liveParser = new ConstellationEventParser(_logger, FireEvent);
 			_chatParser = new ChatEventParser(_logger, FireEvent);
+			_proxy = proxy;
 		}
 
 		// Used during testing
 		internal MixerClientInternal(string channelName, ILoggerFactory loggerFactory, IMixerFactory factory,
-																										ConstellationEventParser liveParser = null, ChatEventParser chatParser = null)
+											  ConstellationEventParser liveParser = null, ChatEventParser chatParser = null)
 				: this(channelName, loggerFactory)
 		{
-			_factory = factory ?? new MixerFactory(loggerFactory);
+			_factory = factory ?? new MixerFactory(loggerFactory) { Proxy = _proxy };
 			_liveParser = liveParser ?? _liveParser;
 			_chatParser = chatParser ?? _chatParser;
 		}
 
 		public async Task<IMixerClient> StartAsync()
 		{
-			_factory = _factory ?? new MixerFactory(_loggerFactory);
+			_factory = _factory ?? new MixerFactory(_loggerFactory) { Proxy = _proxy };
 
 			_restClient = _factory.CreateRestClient();
 			_live = _factory.CreateConstellation(_liveParser, _shutdownRequested.Token);

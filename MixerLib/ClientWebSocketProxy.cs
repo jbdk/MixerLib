@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,11 +13,12 @@ namespace MixerLib
 	{
 		private readonly ClientWebSocket _ws;
 
-		public ClientWebSocketProxy(bool isChat)
+		public ClientWebSocketProxy(bool isChat, IWebProxy proxy = null)
 		{
 			IsChat = isChat;
 			_ws = new ClientWebSocket();
 			_ws.Options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+			_ws.Options.Proxy = proxy;
 		}
 
 		public bool IsChat { get; }
