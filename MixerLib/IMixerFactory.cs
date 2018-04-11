@@ -8,7 +8,7 @@ namespace MixerLib
 	{
 		IWebProxy Proxy { get; set; }
 
-		IClientWebSocketProxy CreateClientWebSocket(bool isChat);
+		IClientWebSocketAdaptor CreateClientWebSocket(bool isChat);
 		IMixerConstellation CreateConstellation(IEventParser parser, CancellationToken shutdownRequest);
 		IMixerChat CreateChat(IMixerRestClient client, IEventParser parser, CancellationToken shutdownRequest);
 		IJsonRpcWebSocket CreateJsonRpcWebSocket(ILogger logger, IEventParser parser);

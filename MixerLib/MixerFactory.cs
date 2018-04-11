@@ -18,7 +18,7 @@ namespace MixerLib
 			_loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
 		}
 
-		public IClientWebSocketProxy CreateClientWebSocket(bool isChat) => new ClientWebSocketProxy(isChat, Proxy);
+		public IClientWebSocketAdaptor CreateClientWebSocket(bool isChat) => new ClientWebSocketAdaptor(isChat, Proxy);
 		public IMixerConstellation CreateConstellation(IEventParser parser, CancellationToken shutdownRequest) => new MixerConstellation(_loggerFactory, this, parser, shutdownRequest);
 		public IMixerChat CreateChat(IMixerRestClient client, IEventParser parser, CancellationToken shutdownRequest) => new MixerChat(_loggerFactory, this, client, parser, shutdownRequest);
 		public IJsonRpcWebSocket CreateJsonRpcWebSocket(ILogger logger, IEventParser parser) => new JsonRpcWebSocket(logger, this, parser);

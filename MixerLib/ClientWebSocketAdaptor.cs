@@ -9,11 +9,11 @@ namespace MixerLib
 	/// <summary>
 	/// Encapsulates a real ClientWebSocket so it can be accessed using a interface
 	/// </summary>
-	internal class ClientWebSocketProxy : IClientWebSocketProxy
+	internal class ClientWebSocketAdaptor : IClientWebSocketAdaptor
 	{
 		private readonly ClientWebSocket _ws;
 
-		public ClientWebSocketProxy(bool isChat, IWebProxy proxy = null)
+		public ClientWebSocketAdaptor(bool isChat, IWebProxy proxy = null)
 		{
 			IsChat = isChat;
 			_ws = new ClientWebSocket();

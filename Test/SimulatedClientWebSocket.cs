@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Test
 {
-	public class SimulatedClientWebSocket : IClientWebSocketProxy
+	public class SimulatedClientWebSocket : IClientWebSocketAdaptor
 	{
 		static int _connectionId = 0;
 

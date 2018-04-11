@@ -56,7 +56,7 @@ namespace Test
 		}
 
 		public IWebProxy Proxy { get; set; }
-		IClientWebSocketProxy IMixerFactory.CreateClientWebSocket(bool isChat) => ( isChat ) ? ChatWebSocket : ConstellationWebSocket;
+		IClientWebSocketAdaptor IMixerFactory.CreateClientWebSocket(bool isChat) => ( isChat ) ? ChatWebSocket : ConstellationWebSocket;
 		IJsonRpcWebSocket IMixerFactory.CreateJsonRpcWebSocket(ILogger logger, IEventParser parser) =>
 			new JsonRpcWebSocket(new Mock<ILogger>().Object, this, parser) { ReplyTimeout = TimeSpan.FromMilliseconds(500), ReconnectDelay = TimeSpan.Zero };
 		IMixerChat IMixerFactory.CreateChat(IMixerRestClient client, IEventParser parser, CancellationToken shutdownRequest) =>

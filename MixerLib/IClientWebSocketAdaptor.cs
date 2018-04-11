@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MixerLib
 {
-	internal interface IClientWebSocketProxy : IDisposable
+	internal interface IClientWebSocketAdaptor : IDisposable
 	{
 		bool IsChat { get; }
 		WebSocketCloseStatus? CloseStatus { get; }

@@ -27,7 +27,7 @@ namespace MixerLib
 		readonly byte[] _readBuffer;
 		readonly MemoryStream _receiveStream = new MemoryStream();
 
-		IClientWebSocketProxy _ws;
+		IClientWebSocketAdaptor _ws;
 		readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
 		bool _disposed;
 		int _nextPacketId = 0;
@@ -126,7 +126,7 @@ namespace MixerLib
 			return delay;
 		}
 
-		private IClientWebSocketProxy CreateWebSocket(string accessToken)
+		private IClientWebSocketAdaptor CreateWebSocket(string accessToken)
 		{
 			var ws = _factory.CreateClientWebSocket(_parser.IsChat);
 			ws.SetRequestHeader("x-is-bot", "true");
@@ -391,7 +391,7 @@ namespace MixerLib
 		/// Reads the complete next text message from the websocket
 		/// </summary>
 		/// <returns>The text message, or null if socket was closed</returns>
-		private async Task<string> ReceiveNextMessageAsync(IClientWebSocketProxy ws)
+		private async Task<string> ReceiveNextMessageAsync(IClientWebSocketAdaptor ws)
 		{
 			_receiveStream.Position = 0;
 			WebSocketReceiveResult result;
