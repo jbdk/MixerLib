@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using MixerLib.Events;
 using MixerLib.Helpers;
 
@@ -70,7 +69,11 @@ namespace MixerLib
 			if (string.IsNullOrEmpty(channelName))
 				throw new ArgumentException("Can't be null or empty", nameof(channelName));
 			if (loggerFactory == null)
-				loggerFactory = new NullLoggerFactory();
+#if NET46
+				loggerFactory = new Microsoft.Extensions.Logging.LoggerFactory();
+#else
+				loggerFactory = new Microsoft.Extensions.Logging.Abstractions.NullLoggerFactory();
+#endif
 
 			ChannelName = channelName;
 
