@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	 <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+	 <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">netstandard2.0;net46</TargetFrameworks>
+	 <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">netstandard2.0</TargetFrameworks>
 	 <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	 <PackageId>Bundgaard.MixerLib</PackageId>
 	 <Version>0.1.0</Version>
