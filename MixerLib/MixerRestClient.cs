@@ -15,11 +15,24 @@ namespace MixerLib
 	internal class MixerRestClient : IMixerRestClient
 	{
 		const string API_URL = "https://mixer.com/api/v1/";
-		const int RETRY_COUNT = 4;
 		public const int TIMEOUT_IN_SECONDS = 5;
 
-		public int RetryDelay { get; set; } = 2000;
-		public int MaxTries { get; set; } = 3;
+		public int RetryDelay
+		{
+			get => _retryDelay;
+			set {
+				_retryDelay = value;
+				UpdateRetryPolicy();
+			}
+		}
+		public int MaxTries
+		{
+			get => _maxTries;
+			set {
+				_maxTries = value;
+				UpdateRetryPolicy();
+			}
+		}
 		public bool HasToken { get; private set; }
 		public string ChannelName { get; private set; }
 		public uint? ChannelId { get; private set; }
@@ -30,6 +43,8 @@ namespace MixerLib
 		readonly HttpClient _client;
 		private bool _initDone;
 		private RetryPolicy<HttpResponseMessage> _retryPolicy;
+		private int _retryDelay = 2000;
+		private int _maxTries = 4;
 		static readonly HttpStatusCode[] s_httpStatusCodesWorthRetrying = {
 			HttpStatusCode.RequestTimeout, // 408
 			HttpStatusCode.InternalServerError, // 500
@@ -53,11 +68,16 @@ namespace MixerLib
 			_client.DefaultRequestHeaders.Add("Accept", "application/json");
 			_client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoStore = true, NoCache = true };
 
+			UpdateRetryPolicy();
+		}
+
+		private void UpdateRetryPolicy()
+		{
 			_retryPolicy = Policy
 				.HandleInner<HttpRequestException>()
 				.OrInner<TaskCanceledException>()
 				.OrResult<HttpResponseMessage>(r => s_httpStatusCodesWorthRetrying.Contains(r.StatusCode))
-				.WaitAndRetryAsync(RETRY_COUNT, (_) => TimeSpan.FromMilliseconds(RetryDelay));
+				.WaitAndRetryAsync(MaxTries, (_) => TimeSpan.FromMilliseconds(RetryDelay));
 		}
 
 		public async Task<(bool online, int viewers, int followers)> InitAsync(string channelName, string oauthToken)
