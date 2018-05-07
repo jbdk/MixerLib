@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using MixerLib;
 using MixerLib.Events;
 using static System.ConsoleColor;
@@ -90,25 +90,14 @@ namespace ChatMonitor
 			PrintLine(Gray, TrimMessage(e.Message));
 		}
 
+		/// <summary>
+		/// Trim preceding whitespace chars down to one
+		/// </summary>
+		/// <param name="text">The test to be trimmed</param>
+		/// <returns>Trimmed version of the text</returns>
 		private static string TrimMessage(string text)
 		{
-			var sb = new StringBuilder(text.Length);
-			bool wasWhitespace = false;
-			foreach (char c in text)
-			{
-				if (char.IsWhiteSpace(c))
-				{
-					wasWhitespace = true;
-				}
-				else
-				{
-					if (wasWhitespace && sb.Length != 0)
-						sb.Append(' ');
-					wasWhitespace = false;
-					sb.Append(c);
-				}
-			}
-			return sb.ToString();
+			return Regex.Replace(text, @"/\s+/g", " ");
 		}
 
 		private static void Print(ConsoleColor color, string format, params object[] arg)
