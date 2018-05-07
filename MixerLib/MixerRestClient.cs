@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MixerLib.Helpers;
 using Polly;
+using Polly.Retry;
 
 namespace MixerLib
 {
@@ -28,7 +29,7 @@ namespace MixerLib
 		readonly ILogger _logger;
 		readonly HttpClient _client;
 		private bool _initDone;
-
+		private RetryPolicy<HttpResponseMessage> _retryPolicy;
 		static readonly HttpStatusCode[] s_httpStatusCodesWorthRetrying = {
 			HttpStatusCode.RequestTimeout, // 408
 			HttpStatusCode.InternalServerError, // 500
@@ -51,6 +52,12 @@ namespace MixerLib
 			_client.BaseAddress = new Uri(API_URL);
 			_client.DefaultRequestHeaders.Add("Accept", "application/json");
 			_client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoStore = true, NoCache = true };
+
+			_retryPolicy = Policy
+				.HandleInner<HttpRequestException>()
+				.OrInner<TaskCanceledException>()
+				.OrResult<HttpResponseMessage>(r => s_httpStatusCodesWorthRetrying.Contains(r.StatusCode))
+				.WaitAndRetryAsync(RETRY_COUNT, (_) => TimeSpan.FromMilliseconds(RetryDelay));
 		}
 
 		public async Task<(bool online, int viewers, int followers)> InitAsync(string channelName, string oauthToken)
@@ -281,13 +288,7 @@ namespace MixerLib
 
 			try
 			{
-				var response = await Policy
-					.HandleInner<HttpRequestException>()
-					.OrInner<TaskCanceledException>()
-					.OrResult<HttpResponseMessage>(r => s_httpStatusCodesWorthRetrying.Contains(r.StatusCode))
-					.WaitAndRetryAsync(RETRY_COUNT, (_) => TimeSpan.FromMilliseconds(RetryDelay))
-					.ExecuteAsync(() => _client.GetAsync(requestUri));
-				return response;
+				return await _retryPolicy.ExecuteAsync(() => _client.GetAsync(requestUri));
 			}
 			catch (Exception e)
 			{
@@ -314,13 +315,7 @@ namespace MixerLib
 
 			try
 			{
-				var response = await Policy
-					.HandleInner<HttpRequestException>()
-					.OrInner<TaskCanceledException>()
-					.OrResult<HttpResponseMessage>(r => s_httpStatusCodesWorthRetrying.Contains(r.StatusCode))
-					.WaitAndRetryAsync(RETRY_COUNT, (_) => TimeSpan.FromMilliseconds(RetryDelay))
-					.ExecuteAsync(() => _client.SendAsync(message));
-
+				var response = await _retryPolicy.ExecuteAsync(() => _client.SendAsync(message));
 				response.EnsureSuccessStatusCode();
 				if (response.Content != null)
 					return await response.Content.ReadAsStringAsync();
