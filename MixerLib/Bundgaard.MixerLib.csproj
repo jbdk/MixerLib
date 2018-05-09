@@ -15,6 +15,7 @@
 	 <RootNamespace>MixerLib</RootNamespace>
 	 <PackageReleaseNotes>Support for net46
 Added Polly for auto-retry API request</PackageReleaseNotes>
+	 <PackageTags>Mixer.com WebSockets ChatBot</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
