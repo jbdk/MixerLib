@@ -28,7 +28,7 @@ Added Polly for auto-retry API request</PackageReleaseNotes>
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net46' AND '$(OS)' == 'Windows_NT' ">
 	 <PackageReference Include="System.ValueTuple" Version="4.4.0" />
-	 <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.2" />
+	 <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
   </ItemGroup>
 
 </Project>
