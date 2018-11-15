@@ -21,7 +21,7 @@ Added Polly for auto-retry API request</PackageReleaseNotes>
   <ItemGroup>
 	 <PackageReference Include="System.Net.WebSockets.Client" Version="4.3.2" />
 	 <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-	 <PackageReference Include="Polly" Version="5.8.0" />
+	 <PackageReference Include="Polly" Version="6.1.1" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
 	 <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.1" />
